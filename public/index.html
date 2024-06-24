@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K6 Load Testing</title>
+</head>
+<body>
+    <h1>K6 Load Testing</h1>
+    <a href="/html-report" target="_blank">View HTML Report</a>
+    <form action="/html-report">
+        <button type="submit">View HTML Report</button>
+    </form>
+    <form id="testForm">
+        <label for="target">Target URL:</label>
+        <input type="text" id="target" name="target" required><br><br>
+        <label for="duration">Duration:</label>
+        <input type="text" id="duration" name="duration" required><br><br>
+        <button type="submit">Start Test</button>
+    </form>
+    <div id="response"></div>
+    <script>
+        document.getElementById('testForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const target = document.getElementById('target').value;
+            const duration = document.getElementById('duration').value;
+            const response = await fetch('/execute-test', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ target, duration })
+            });
+            const result = await response.json(); // Assuming the result is JSON
+            const formattedResult = formatResult(result.result); // Format the result
+            document.getElementById('response').innerHTML = formattedResult;;
+        });
+    
+        function formatResult(result) {
+            // Split the result by newlines and then rejoin them with HTML line breaks for better readability
+            return result.split('\n').join('<br>');
+        }
+    </script>
+</body>
+</html>
